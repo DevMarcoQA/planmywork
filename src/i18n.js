@@ -5,12 +5,17 @@ const resources = {
   es: {
     translation: {
       brand: 'PlanMyWork',
+      nav: {
+        home: 'Inicio',
+        items: 'Crear ítems',
+        calendar: 'Calendario',
+      },
       hero: {
         kicker: 'PlanMyWork',
         title: 'Plantilla Vite + React + Tailwind lista para construir',
         description:
           'Tailwind CSS ya está configurado. Empieza editando este componente en {{path}} y añade tus propias vistas.',
-        path: 'src/App.jsx',
+        path: 'src/pages/HomePage.jsx',
       },
       links: {
         tailwind: {
@@ -26,6 +31,21 @@ const resources = {
           description: 'Herramientas y plugins',
         },
       },
+      items: {
+        title: 'Crear ítems',
+        subtitle: 'Centraliza tus tareas o elementos de trabajo',
+        helper:
+          'Usa este espacio para crear nuevos ítems que luego podrás ver en el calendario.',
+        action: 'Crear nuevo ítem',
+        draft: 'Aquí puedes colocar tu formulario de creación.',
+      },
+      calendar: {
+        title: 'Calendario',
+        subtitle: 'Visualiza tus ítems en una línea temporal',
+        helper:
+          'Integra aquí tu calendario o agenda para organizar las fechas clave.',
+        empty: 'Sin eventos aún. Crea un ítem para empezar.',
+      },
       language: {
         label: 'Idioma',
         es: 'Español',
@@ -36,12 +56,17 @@ const resources = {
   en: {
     translation: {
       brand: 'PlanMyWork',
+      nav: {
+        home: 'Home',
+        items: 'Create items',
+        calendar: 'Calendar',
+      },
       hero: {
         kicker: 'PlanMyWork',
         title: 'Vite + React + Tailwind starter ready to build',
         description:
           'Tailwind CSS is set up. Start by editing this component at {{path}} and add your own views.',
-        path: 'src/App.jsx',
+        path: 'src/pages/HomePage.jsx',
       },
       links: {
         tailwind: {
@@ -56,6 +81,21 @@ const resources = {
           title: 'Vite',
           description: 'Tools and plugins',
         },
+      },
+      items: {
+        title: 'Create items',
+        subtitle: 'Centralize your tasks or work items',
+        helper:
+          'Use this area to create new items that you can later view on the calendar.',
+        action: 'Create new item',
+        draft: 'Place your creation form here.',
+      },
+      calendar: {
+        title: 'Calendar',
+        subtitle: 'See your items on a timeline',
+        helper:
+          'Plug in your calendar/agenda here to organize key dates.',
+        empty: 'No events yet. Create an item to get started.',
       },
       language: {
         label: 'Language',
