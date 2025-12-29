@@ -1,33 +1,23 @@
-import { NavLink, Route, Routes } from 'react-router-dom'
+import { useEffect, useState } from 'react'
+import { NavLink, Outlet, Route, Routes, useNavigate } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import HomePage from './pages/HomePage.jsx'
 import ItemsPage from './pages/ItemsPage.jsx'
 import CalendarPage from './pages/CalendarPage.jsx'
+import LoginPage from './pages/LoginPage.jsx'
+import ProtectedRoute from './components/ProtectedRoute.jsx'
+import { supabase } from './lib/supabaseClient.js'
 import './App.css'
 
-function App() {
-  const { t, i18n } = useTranslation()
-  const currentLang = i18n.resolvedLanguage || i18n.language
-
-  const navItems = [
-    { to: '/', label: t('nav.home') },
-    { to: '/items', label: t('nav.items') },
-    { to: '/calendar', label: t('nav.calendar') },
-  ]
-
-  const handleLanguageChange = (event) => {
-    i18n.changeLanguage(event.target.value)
-  }
-
-  const navLinkClasses = ({ isActive }) =>
-    [
-      'px-4 py-2 rounded-lg text-sm font-semibold transition',
-      'border border-transparent',
-      isActive
-        ? 'bg-sky-600 text-white shadow'
-        : 'text-slate-200 hover:bg-slate-800/60 hover:border-slate-700',
-    ].join(' ')
-
+function AppShell({
+  navItems,
+  navLinkClasses,
+  handleLanguageChange,
+  currentLang,
+  onSignOut,
+  userEmail,
+  t,
+}) {
   return (
     <main className="min-h-screen flex items-center justify-center p-6">
       <section className="w-full max-w-5xl rounded-2xl border border-slate-800 bg-slate-900/60 backdrop-blur shadow-xl shadow-sky-900/20 p-6 sm:p-10 space-y-6">
@@ -41,6 +31,11 @@ function App() {
                 {t('brand')}
               </p>
               <p className="text-lg font-semibold text-slate-100">PlanMyWork</p>
+              {userEmail ? (
+                <p className="text-xs text-slate-400">
+                  {t('auth.loggedAs', { email: userEmail })}
+                </p>
+              ) : null}
             </div>
           </div>
 
@@ -69,18 +64,105 @@ function App() {
                 <option value="en">{t('language.en')}</option>
               </select>
             </div>
+            <button
+              onClick={onSignOut}
+              className="rounded-lg border border-slate-700 px-3 py-2 text-sm font-semibold text-slate-100 hover:bg-slate-800/70 focus:outline-none focus:ring-2 focus:ring-rose-500"
+            >
+              {t('auth.logout')}
+            </button>
           </div>
         </header>
 
         <div className="rounded-xl border border-slate-800 bg-slate-900/60 p-6 shadow-inner">
-          <Routes>
-            <Route path="/" element={<HomePage />} />
-            <Route path="/items" element={<ItemsPage />} />
-            <Route path="/calendar" element={<CalendarPage />} />
-          </Routes>
+          <Outlet />
         </div>
       </section>
     </main>
+  )
+}
+
+function App() {
+  const { t, i18n } = useTranslation()
+  const navigate = useNavigate()
+  const [session, setSession] = useState(null)
+  const [loadingSession, setLoadingSession] = useState(true)
+
+  const currentLang = i18n.resolvedLanguage || i18n.language
+
+  const navItems = [
+    { to: '/', label: t('nav.home') },
+    { to: '/items', label: t('nav.items') },
+    { to: '/calendar', label: t('nav.calendar') },
+  ]
+
+  const handleLanguageChange = (event) => {
+    i18n.changeLanguage(event.target.value)
+  }
+
+  const navLinkClasses = ({ isActive }) =>
+    [
+      'px-4 py-2 rounded-lg text-sm font-semibold transition',
+      'border border-transparent',
+      isActive
+        ? 'bg-sky-600 text-white shadow'
+        : 'text-slate-200 hover:bg-slate-800/60 hover:border-slate-700',
+    ].join(' ')
+
+  useEffect(() => {
+    let active = true
+
+    supabase.auth
+      .getSession()
+      .then(({ data }) => {
+        if (!active) return
+        setSession(data.session)
+        setLoadingSession(false)
+      })
+      .catch(() => setLoadingSession(false))
+
+    const { data: subscription } = supabase.auth.onAuthStateChange(
+      (_event, newSession) => {
+        setSession(newSession)
+        if (!newSession) navigate('/login')
+      },
+    )
+
+    return () => {
+      active = false
+      subscription?.subscription?.unsubscribe()
+    }
+  }, [navigate])
+
+  const handleSignOut = async () => {
+    const { error } = await supabase.auth.signOut()
+    if (error) alert(t('auth.logoutError', { message: error.message }))
+  }
+
+  return (
+    <Routes>
+      <Route path="/login" element={<LoginPage session={session} />} />
+      <Route
+        element={<ProtectedRoute session={session} loading={loadingSession} />}
+      >
+        <Route
+          element={
+            <AppShell
+              navItems={navItems}
+              navLinkClasses={navLinkClasses}
+              handleLanguageChange={handleLanguageChange}
+              currentLang={currentLang}
+              onSignOut={handleSignOut}
+              userEmail={session?.user?.email}
+              t={t}
+            />
+          }
+        >
+          <Route path="/" element={<HomePage />} />
+          <Route path="/items" element={<ItemsPage />} />
+          <Route path="/calendar" element={<CalendarPage />} />
+        </Route>
+      </Route>
+    </Routes>
   )
 }
 

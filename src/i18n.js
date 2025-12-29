@@ -46,6 +46,17 @@ const resources = {
           'Integra aquí tu calendario o agenda para organizar las fechas clave.',
         empty: 'Sin eventos aún. Crea un ítem para empezar.',
       },
+      auth: {
+        loginTitle: 'Inicia sesión',
+        loginSubtitle: 'Accede con tu cuenta de Google para continuar',
+        google: 'Continuar con Google',
+        loginHelp:
+          'Tras iniciar sesión, volverás aquí automáticamente. Asegúrate de haber configurado la URL de redirección en Supabase y Google.',
+        loginError: 'No se pudo iniciar sesión: {{message}}',
+        logout: 'Cerrar sesión',
+        logoutError: 'No se pudo cerrar sesión: {{message}}',
+        loggedAs: 'Sesión iniciada como {{email}}',
+      },
       language: {
         label: 'Idioma',
         es: 'Español',
@@ -96,6 +107,17 @@ const resources = {
         helper:
           'Plug in your calendar/agenda here to organize key dates.',
         empty: 'No events yet. Create an item to get started.',
+      },
+      auth: {
+        loginTitle: 'Sign in',
+        loginSubtitle: 'Use your Google account to continue',
+        google: 'Continue with Google',
+        loginHelp:
+          'After signing in, you will be sent back here. Ensure redirect URLs are set in Supabase and Google.',
+        loginError: 'Could not sign in: {{message}}',
+        logout: 'Sign out',
+        logoutError: 'Could not sign out: {{message}}',
+        loggedAs: 'Signed in as {{email}}',
       },
       language: {
         label: 'Language',
