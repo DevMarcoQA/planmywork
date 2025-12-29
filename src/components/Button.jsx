@@ -1,7 +1,7 @@
 import { theme } from '../config/colors.js'
 
 const baseClasses =
-  'inline-flex items-center justify-center gap-2 rounded-lg font-semibold focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-slate-900 transition'
+  'inline-flex items-center justify-center gap-2 rounded-lg font-semibold focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-[#f7f2e9] transition text-black'
 
 const variants = {
   primary: [

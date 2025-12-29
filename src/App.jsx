@@ -27,16 +27,18 @@ function AppShell({
       >
         <header className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div className="flex items-center gap-3">
-            <div className="h-10 w-10 rounded-xl bg-sky-500/20 border border-sky-500/50 flex items-center justify-center text-sky-200 font-bold">
+            <div className="h-10 w-10 rounded-xl bg-[#d4a373]/20 border border-[#d4a373]/50 flex items-center justify-center text-[#8a6b4a] font-bold">
               PM
             </div>
             <div>
-              <p className="text-xs uppercase tracking-widest text-slate-400">
+              <p className={`text-xs uppercase tracking-widest ${theme.text.muted}`}>
                 {t('brand')}
               </p>
-              <p className="text-lg font-semibold text-slate-100">PlanMyWork</p>
+              <p className={`text-lg font-semibold ${theme.text.primary}`}>
+                PlanMyWork
+              </p>
               {userEmail ? (
-                <p className="text-xs text-slate-400">
+                <p className={`text-xs ${theme.text.muted}`}>
                   {t('auth.loggedAs', { email: userEmail })}
                 </p>
               ) : null}

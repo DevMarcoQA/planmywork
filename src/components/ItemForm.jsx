@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import Button from './Button.jsx'
 import Select from './Select.jsx'
-import { avatarColors } from '../config/colors.js'
+import { avatarColors, theme } from '../config/colors.js'
 
 const defaultValues = {
   name: '',
@@ -40,18 +40,22 @@ function ItemForm({
   return (
     <form onSubmit={handleSubmit} className="mt-6 space-y-4">
       <div className="grid gap-4 sm:grid-cols-2">
-        <label className="space-y-2 text-sm font-medium text-slate-200">
+        <label
+          className={`space-y-2 text-sm font-medium ${theme.text.primary}`}
+        >
           <span>{t('items.form.name')}</span>
           <input
             required
             value={form.name}
             onChange={handleChange('name')}
-            className="w-full rounded-lg border border-slate-700 bg-slate-900 px-3 py-2 text-slate-100 focus:outline-none focus:ring-2 focus:ring-sky-500"
+            className={`w-full rounded-lg border px-3 py-2 ${theme.form.background} ${theme.form.border} ${theme.form.text} ${theme.form.placeholder} focus:outline-none focus:ring-2 ${theme.form.focus}`}
             placeholder="Ej. Proyecto A"
           />
         </label>
 
-        <label className="space-y-2 text-sm font-medium text-slate-200">
+        <label
+          className={`space-y-2 text-sm font-medium ${theme.text.primary}`}
+        >
           <span>{t('items.form.avatarColor')}</span>
           <div className="flex items-center gap-2">
             <Select
@@ -61,12 +65,14 @@ function ItemForm({
               className="flex-1"
             />
             <span
-              className={`h-9 w-9 rounded-full border border-slate-700 ${selectedColor?.colorDot}`}
+              className={`h-9 w-9 rounded-full border border-transparent ${selectedColor?.colorDot}`}
             />
           </div>
         </label>
 
-        <label className="space-y-2 text-sm font-medium text-slate-200">
+        <label
+          className={`space-y-2 text-sm font-medium ${theme.text.primary}`}
+        >
           <span>{t('items.form.capacity')}</span>
           <input
             required
@@ -74,12 +80,14 @@ function ItemForm({
             min="0"
             value={form.capacity}
             onChange={handleChange('capacity')}
-            className="w-full rounded-lg border border-slate-700 bg-slate-900 px-3 py-2 text-slate-100 focus:outline-none focus:ring-2 focus:ring-sky-500"
+            className={`w-full rounded-lg border px-3 py-2 ${theme.form.background} ${theme.form.border} ${theme.form.text} ${theme.form.placeholder} focus:outline-none focus:ring-2 ${theme.form.focus}`}
             placeholder="Ej. 5"
           />
         </label>
 
-        <label className="space-y-2 text-sm font-medium text-slate-200">
+        <label
+          className={`space-y-2 text-sm font-medium ${theme.text.primary}`}
+        >
           <span>{t('items.form.days')}</span>
           <input
             required
@@ -87,19 +95,21 @@ function ItemForm({
             min="0"
             value={form.days}
             onChange={handleChange('days')}
-            className="w-full rounded-lg border border-slate-700 bg-slate-900 px-3 py-2 text-slate-100 focus:outline-none focus:ring-2 focus:ring-sky-500"
+            className={`w-full rounded-lg border px-3 py-2 ${theme.form.background} ${theme.form.border} ${theme.form.text} ${theme.form.placeholder} focus:outline-none focus:ring-2 ${theme.form.focus}`}
             placeholder="Ej. 10"
           />
         </label>
       </div>
 
-      <label className="space-y-2 text-sm font-medium text-slate-200 block">
+      <label
+        className={`space-y-2 text-sm font-medium ${theme.text.primary} block`}
+      >
         <span>{t('items.form.description')}</span>
         <textarea
           value={form.description}
           onChange={handleChange('description')}
           rows={3}
-          className="w-full rounded-lg border border-slate-700 bg-slate-900 px-3 py-2 text-slate-100 focus:outline-none focus:ring-2 focus:ring-sky-500"
+          className={`w-full rounded-lg border px-3 py-2 ${theme.form.background} ${theme.form.border} ${theme.form.text} ${theme.form.placeholder} focus:outline-none focus:ring-2 ${theme.form.focus}`}
           placeholder="Detalles, notas, etc."
         />
       </label>
