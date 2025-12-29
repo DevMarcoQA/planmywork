@@ -38,6 +38,16 @@ const resources = {
           'Usa este espacio para crear nuevos ítems que luego podrás ver en el calendario.',
         action: 'Crear nuevo ítem',
         draft: 'Aquí puedes colocar tu formulario de creación.',
+        form: {
+          title: 'Nuevo ítem',
+          name: 'Nombre',
+          avatarColor: 'Color de avatar',
+          capacity: 'Capacidad diaria',
+          days: 'Cantidad de días',
+          description: 'Descripción (opcional)',
+          submit: 'Guardar ítem',
+          cancel: 'Cancelar',
+        },
       },
       calendar: {
         title: 'Calendario',
@@ -100,6 +110,16 @@ const resources = {
           'Use this area to create new items that you can later view on the calendar.',
         action: 'Create new item',
         draft: 'Place your creation form here.',
+        form: {
+          title: 'New item',
+          name: 'Name',
+          avatarColor: 'Avatar color',
+          capacity: 'Daily capacity',
+          days: 'Number of days',
+          description: 'Description (optional)',
+          submit: 'Save item',
+          cancel: 'Cancel',
+        },
       },
       calendar: {
         title: 'Calendar',
