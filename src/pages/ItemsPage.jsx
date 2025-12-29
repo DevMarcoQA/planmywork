@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next'
 import Button from '../components/Button.jsx'
 import ItemForm from '../components/ItemForm.jsx'
 import { supabase } from '../lib/supabaseClient.js'
+import { avatarColorMap, theme } from '../config/colors.js'
 
 function ItemsPage() {
   const { t } = useTranslation()
@@ -102,14 +103,6 @@ function ItemsPage() {
     createItem()
   }
 
-  const colorClasses = {
-    sky: 'bg-sky-500',
-    emerald: 'bg-emerald-500',
-    amber: 'bg-amber-500',
-    violet: 'bg-violet-500',
-    slate: 'bg-slate-500',
-  }
-
   const hasItems = items.length > 0
 
   return (
@@ -125,7 +118,9 @@ function ItemsPage() {
       </header>
 
       {!hasItems ? (
-        <div className="rounded-2xl border border-dashed border-slate-700 bg-slate-900/40 p-6 text-slate-200 shadow-inner">
+        <div
+          className={`rounded-2xl border border-dashed ${theme.panelAlt.border} ${theme.panelAlt.background} p-6 text-slate-200 shadow-inner`}
+        >
           <div className="flex items-center justify-between gap-3">
             <div className="space-y-1">
               <p className="text-lg font-semibold">{t('items.action')}</p>
@@ -145,7 +140,9 @@ function ItemsPage() {
           )}
         </div>
       ) : (
-        <div className="rounded-2xl border border-slate-800 bg-slate-900/60 p-6 text-slate-200 shadow-inner space-y-4">
+        <div
+          className={`rounded-2xl border ${theme.panel.border} ${theme.panel.background} p-6 text-slate-200 shadow-inner space-y-4`}
+        >
           <div className="flex flex-wrap items-center justify-between gap-3">
             <div className="space-y-1">
               <p className="text-lg font-semibold">{t('items.action')}</p>
@@ -171,12 +168,12 @@ function ItemsPage() {
               {items.map((item) => (
                 <div
                   key={item.id}
-                  className="rounded-xl border border-slate-800 bg-slate-900/70 p-4 shadow-inner flex flex-col gap-3"
+                    className={`rounded-xl border ${theme.panel.border} ${theme.panelAlt.background} p-4 shadow-inner flex flex-col gap-3`}
                 >
                   <div className="flex items-center gap-3">
                     <span
                       className={`h-10 w-10 rounded-full border border-slate-700 ${
-                        colorClasses[item.avatar_color] || 'bg-slate-500'
+                        avatarColorMap[item.avatar_color] || 'bg-slate-500'
                       }`}
                     />
                     <div>

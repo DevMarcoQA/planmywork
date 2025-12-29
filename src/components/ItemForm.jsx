@@ -2,14 +2,7 @@ import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import Button from './Button.jsx'
 import Select from './Select.jsx'
-
-const colors = [
-  { value: 'sky', label: 'Sky', colorDot: 'bg-sky-500' },
-  { value: 'emerald', label: 'Emerald', colorDot: 'bg-emerald-500' },
-  { value: 'amber', label: 'Amber', colorDot: 'bg-amber-500' },
-  { value: 'violet', label: 'Violet', colorDot: 'bg-violet-500' },
-  { value: 'slate', label: 'Slate', colorDot: 'bg-slate-500' },
-]
+import { avatarColors } from '../config/colors.js'
 
 const defaultValues = {
   name: '',
@@ -42,7 +35,7 @@ function ItemForm({
     setForm(defaultValues)
   }
 
-  const selectedColor = colors.find((c) => c.value === form.avatarColor)
+  const selectedColor = avatarColors.find((c) => c.value === form.avatarColor)
 
   return (
     <form onSubmit={handleSubmit} className="mt-6 space-y-4">
@@ -64,7 +57,7 @@ function ItemForm({
             <Select
               value={form.avatarColor}
               onChange={handleChange('avatarColor')}
-              options={colors}
+              options={avatarColors}
               className="flex-1"
             />
             <span

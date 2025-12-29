@@ -1,9 +1,19 @@
+import { theme } from '../config/colors.js'
+
 const baseClasses =
   'inline-flex items-center justify-center gap-2 rounded-lg font-semibold focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-slate-900 transition'
 
 const variants = {
-  primary: 'bg-sky-600 text-white hover:bg-sky-500 focus:ring-sky-400',
-  secondary: 'border border-slate-700 text-slate-100 hover:bg-slate-800/70 focus:ring-slate-500',
+  primary: [
+    theme.button.primary.base,
+    theme.button.primary.hover,
+    theme.button.primary.ring,
+  ].join(' '),
+  secondary: [
+    theme.button.secondary.base,
+    theme.button.secondary.hover,
+    theme.button.secondary.ring,
+  ].join(' '),
 }
 
 const sizes = {

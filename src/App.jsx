@@ -8,6 +8,7 @@ import LoginPage from './pages/LoginPage.jsx'
 import ProtectedRoute from './components/ProtectedRoute.jsx'
 import { supabase } from './lib/supabaseClient.js'
 import Select from './components/Select.jsx'
+import { theme } from './config/colors.js'
 import './App.css'
 
 function AppShell({
@@ -21,7 +22,9 @@ function AppShell({
 }) {
   return (
     <main className="min-h-screen flex items-center justify-center p-6">
-      <section className="w-full max-w-5xl rounded-2xl border border-slate-800 bg-slate-900/60 backdrop-blur shadow-xl shadow-sky-900/20 p-6 sm:p-10 space-y-6">
+      <section
+        className={`w-full max-w-5xl rounded-2xl border ${theme.panel.border} ${theme.panel.background} backdrop-blur shadow-xl shadow-sky-900/20 p-6 sm:p-10 space-y-6`}
+      >
         <header className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div className="flex items-center gap-3">
             <div className="h-10 w-10 rounded-xl bg-sky-500/20 border border-sky-500/50 flex items-center justify-center text-sky-200 font-bold">
@@ -75,7 +78,9 @@ function AppShell({
           </div>
         </header>
 
-        <div className="rounded-xl border border-slate-800 bg-slate-900/60 p-6 shadow-inner">
+        <div
+          className={`rounded-xl border ${theme.panel.border} ${theme.panel.background} p-6 shadow-inner`}
+        >
           <Outlet />
         </div>
       </section>
