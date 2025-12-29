@@ -1,13 +1,14 @@
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import Button from './Button.jsx'
+import Select from './Select.jsx'
 
 const colors = [
-  { value: 'sky', label: 'Sky', className: 'bg-sky-500' },
-  { value: 'emerald', label: 'Emerald', className: 'bg-emerald-500' },
-  { value: 'amber', label: 'Amber', className: 'bg-amber-500' },
-  { value: 'violet', label: 'Violet', className: 'bg-violet-500' },
-  { value: 'slate', label: 'Slate', className: 'bg-slate-500' },
+  { value: 'sky', label: 'Sky', colorDot: 'bg-sky-500' },
+  { value: 'emerald', label: 'Emerald', colorDot: 'bg-emerald-500' },
+  { value: 'amber', label: 'Amber', colorDot: 'bg-amber-500' },
+  { value: 'violet', label: 'Violet', colorDot: 'bg-violet-500' },
+  { value: 'slate', label: 'Slate', colorDot: 'bg-slate-500' },
 ]
 
 const defaultValues = {
@@ -60,19 +61,14 @@ function ItemForm({
         <label className="space-y-2 text-sm font-medium text-slate-200">
           <span>{t('items.form.avatarColor')}</span>
           <div className="flex items-center gap-2">
-            <select
+            <Select
               value={form.avatarColor}
               onChange={handleChange('avatarColor')}
-              className="flex-1 rounded-lg border border-slate-700 bg-slate-900 px-3 py-2 text-slate-100 focus:outline-none focus:ring-2 focus:ring-sky-500"
-            >
-              {colors.map((c) => (
-                <option key={c.value} value={c.value}>
-                  {c.label}
-                </option>
-              ))}
-            </select>
+              options={colors}
+              className="flex-1"
+            />
             <span
-              className={`h-9 w-9 rounded-full border border-slate-700 ${selectedColor?.className}`}
+              className={`h-9 w-9 rounded-full border border-slate-700 ${selectedColor?.colorDot}`}
             />
           </div>
         </label>

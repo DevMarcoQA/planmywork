@@ -7,6 +7,7 @@ import CalendarPage from './pages/CalendarPage.jsx'
 import LoginPage from './pages/LoginPage.jsx'
 import ProtectedRoute from './components/ProtectedRoute.jsx'
 import { supabase } from './lib/supabaseClient.js'
+import Select from './components/Select.jsx'
 import './App.css'
 
 function AppShell({
@@ -54,15 +55,16 @@ function AppShell({
               >
                 {t('language.label')}
               </label>
-              <select
+              <Select
                 id="lang-select"
                 value={currentLang}
                 onChange={handleLanguageChange}
-                className="rounded-lg border border-slate-700 bg-slate-900 px-3 py-2 text-sm text-slate-100 shadow-inner focus:outline-none focus:ring-2 focus:ring-sky-500"
-              >
-                <option value="es">{t('language.es')}</option>
-                <option value="en">{t('language.en')}</option>
-              </select>
+                options={[
+                  { value: 'es', label: t('language.es') },
+                  { value: 'en', label: t('language.en') },
+                ]}
+                className="min-w-[120px]"
+              />
             </div>
             <button
               onClick={onSignOut}
