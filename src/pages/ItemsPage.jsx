@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import Button from '../components/Button.jsx'
 import ItemForm from '../components/ItemForm.jsx'
@@ -10,6 +10,8 @@ function ItemsPage() {
   const [submitting, setSubmitting] = useState(false)
   const [userId, setUserId] = useState(null)
   const [session, setSession] = useState(null)
+  const [items, setItems] = useState([])
+  const [loadingItems, setLoadingItems] = useState(true)
 
   const ensureSessionAndUser = async () => {
     let currentSession = session
@@ -39,6 +41,32 @@ function ItemsPage() {
     return userRow.id
   }
 
+  const loadItems = async () => {
+    try {
+      setLoadingItems(true)
+      const uid = await ensureSessionAndUser()
+      const { data, error } = await supabase
+        .schema('api')
+        .from('workitems')
+        .select('id, name, avatar_color, daily_capacity, days, description, created_at')
+        .eq('user_id', uid)
+        .order('created_at', { ascending: false })
+
+      if (error) throw error
+      setItems(data || [])
+    } catch (err) {
+      console.error('No se pudieron cargar los ítems', err)
+      alert(t('auth.loginError', { message: err.message }))
+    } finally {
+      setLoadingItems(false)
+    }
+  }
+
+  useEffect(() => {
+    loadItems()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
   const handleSubmit = (formValues) => {
     const createItem = async () => {
       try {
@@ -62,6 +90,7 @@ function ItemsPage() {
         if (error) throw error
 
         setOpen(false)
+        loadItems()
       } catch (err) {
         console.error('No se pudo crear el ítem', err)
         alert(t('auth.loginError', { message: err.message }))
@@ -72,6 +101,16 @@ function ItemsPage() {
 
     createItem()
   }
+
+  const colorClasses = {
+    sky: 'bg-sky-500',
+    emerald: 'bg-emerald-500',
+    amber: 'bg-amber-500',
+    violet: 'bg-violet-500',
+    slate: 'bg-slate-500',
+  }
+
+  const hasItems = items.length > 0
 
   return (
     <div className="space-y-4">
@@ -85,25 +124,80 @@ function ItemsPage() {
         <p className="text-slate-300 leading-relaxed">{t('items.helper')}</p>
       </header>
 
-      <div className="rounded-2xl border border-dashed border-slate-700 bg-slate-900/40 p-6 text-slate-200 shadow-inner">
-        <div className="flex items-center justify-between gap-3">
-          <div className="space-y-1">
-            <p className="text-lg font-semibold">{t('items.action')}</p>
-            <p className="text-sm text-slate-400">{t('items.draft')}</p>
+      {!hasItems ? (
+        <div className="rounded-2xl border border-dashed border-slate-700 bg-slate-900/40 p-6 text-slate-200 shadow-inner">
+          <div className="flex items-center justify-between gap-3">
+            <div className="space-y-1">
+              <p className="text-lg font-semibold">{t('items.action')}</p>
+              <p className="text-sm text-slate-400">{t('items.draft')}</p>
+            </div>
+            {!open && (
+              <Button onClick={() => setOpen(true)}>{t('items.action')}</Button>
+            )}
           </div>
-          {!open && (
-            <Button onClick={() => setOpen(true)}>{t('items.action')}</Button>
+
+          {open && (
+            <ItemForm
+              onSubmit={handleSubmit}
+              onCancel={() => setOpen(false)}
+              submitting={submitting}
+            />
           )}
         </div>
+      ) : (
+        <div className="rounded-2xl border border-slate-800 bg-slate-900/60 p-6 text-slate-200 shadow-inner space-y-4">
+          <div className="flex flex-wrap items-center justify-between gap-3">
+            <div className="space-y-1">
+              <p className="text-lg font-semibold">{t('items.action')}</p>
+              <p className="text-sm text-slate-400">{t('items.draft')}</p>
+            </div>
+            {!open && (
+              <Button onClick={() => setOpen(true)}>{t('items.action')}</Button>
+            )}
+          </div>
 
-        {open && (
-          <ItemForm
-            onSubmit={handleSubmit}
-            onCancel={() => setOpen(false)}
-            submitting={submitting}
-          />
-        )}
-      </div>
+          {open && (
+            <ItemForm
+              onSubmit={handleSubmit}
+              onCancel={() => setOpen(false)}
+              submitting={submitting}
+            />
+          )}
+
+          {loadingItems ? (
+            <div className="text-sm text-slate-400">Cargando ítems...</div>
+          ) : (
+            <div className="divide-y divide-slate-800">
+              {items.map((item) => (
+                <div
+                  key={item.id}
+                  className="py-4 first:pt-0 last:pb-0 flex flex-col gap-2"
+                >
+                  <div className="flex items-center gap-3">
+                    <span
+                      className={`h-10 w-10 rounded-full border border-slate-700 ${
+                        colorClasses[item.avatar_color] || 'bg-slate-500'
+                      }`}
+                    />
+                    <div>
+                      <p className="text-base font-semibold text-slate-100">
+                        {item.name}
+                      </p>
+                      <p className="text-xs text-slate-400">
+                        Capacidad diaria: {item.daily_capacity} • Días:{' '}
+                        {item.days}
+                      </p>
+                    </div>
+                  </div>
+                  {item.description ? (
+                    <p className="text-sm text-slate-300">{item.description}</p>
+                  ) : null}
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      )}
     </div>
   )
 }
