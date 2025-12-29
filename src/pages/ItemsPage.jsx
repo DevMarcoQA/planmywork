@@ -167,11 +167,11 @@ function ItemsPage() {
           {loadingItems ? (
             <div className="text-sm text-slate-400">Cargando ítems...</div>
           ) : (
-            <div className="divide-y divide-slate-800">
+            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
               {items.map((item) => (
                 <div
                   key={item.id}
-                  className="py-4 first:pt-0 last:pb-0 flex flex-col gap-2"
+                  className="rounded-xl border border-slate-800 bg-slate-900/70 p-4 shadow-inner flex flex-col gap-3"
                 >
                   <div className="flex items-center gap-3">
                     <span
