@@ -5,6 +5,7 @@ function Option({ option, isSelected, onSelect }) {
     <button
       type="button"
       onClick={() => onSelect(option.value)}
+      onMouseDown={(e) => e.preventDefault()}
       onKeyDown={(e) => {
         if (e.key === 'Enter' || e.key === ' ') {
           e.preventDefault()
@@ -57,8 +58,6 @@ function Select({
   return (
     <div
       className={['relative', className].filter(Boolean).join(' ')}
-      tabIndex={0}
-      onBlur={() => setTimeout(() => setOpen(false), 100)}
     >
       <button
         type="button"
