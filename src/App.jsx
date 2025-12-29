@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { NavLink, Outlet, Route, Routes, useNavigate } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import HomePage from './pages/HomePage.jsx'
@@ -96,6 +96,7 @@ function App() {
   const [session, setSession] = useState(null)
   const [loadingSession, setLoadingSession] = useState(true)
   const [ensuringUser, setEnsuringUser] = useState(false)
+  const ensuredUserRef = useRef(false)
 
   const currentLang = i18n.resolvedLanguage || i18n.language
 
@@ -145,7 +146,7 @@ function App() {
 
   const ensureUserRow = useCallback(
     async (currentSession) => {
-      if (!currentSession || ensuringUser) return
+      if (!currentSession || ensuringUser || ensuredUserRef.current) return
       setEnsuringUser(true)
 
       const authId = currentSession.user.id
@@ -174,6 +175,7 @@ function App() {
 
           if (insertError) throw insertError
         }
+        ensuredUserRef.current = true
       } catch (err) {
         console.error('No se pudo asegurar el usuario', err)
         alert(t('auth.loginError', { message: err.message }))

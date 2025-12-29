@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import Button from '../components/Button.jsx'
 import ItemForm from '../components/ItemForm.jsx'
+import ConfirmDialog from '../components/ConfirmDialog.jsx'
 import { supabase } from '../lib/supabaseClient.js'
 import { avatarColorMap, theme } from '../config/colors.js'
 
@@ -13,6 +14,9 @@ function ItemsPage() {
   const [session, setSession] = useState(null)
   const [items, setItems] = useState([])
   const [loadingItems, setLoadingItems] = useState(true)
+  const [editingItem, setEditingItem] = useState(null)
+  const [deletingId, setDeletingId] = useState(null)
+  const [confirmItem, setConfirmItem] = useState(null)
 
   const ensureSessionAndUser = async () => {
     let currentSession = session
@@ -69,7 +73,7 @@ function ItemsPage() {
   }, [])
 
   const handleSubmit = (formValues) => {
-    const createItem = async () => {
+    const saveItem = async () => {
       try {
         setSubmitting(true)
         const uid = await ensureSessionAndUser()
@@ -83,14 +87,28 @@ function ItemsPage() {
           description: formValues.description || null,
         }
 
-        const { error } = await supabase
-          .schema('api')
-          .from('workitems')
-          .insert([payload])
+        if (editingItem) {
+          const { error } = await supabase
+            .schema('api')
+            .from('workitems')
+            .update(payload)
+            .eq('id', editingItem.id)
+            .eq('user_id', uid)
+            .select('id') // fuerza la petición y devuelve el id actualizado
 
-        if (error) throw error
+          if (error) throw error
+        } else {
+          const { error } = await supabase
+            .schema('api')
+            .from('workitems')
+            .insert([payload])
+            .select('id') // fuerza la petición y devuelve el id creado
+
+          if (error) throw error
+        }
 
         setOpen(false)
+        setEditingItem(null)
         loadItems()
       } catch (err) {
         console.error('No se pudo crear el ítem', err)
@@ -100,7 +118,37 @@ function ItemsPage() {
       }
     }
 
-    createItem()
+    saveItem()
+  }
+
+  const handleEdit = (item) => {
+    setEditingItem(item)
+    setOpen(true)
+  }
+
+  const handleDelete = async () => {
+    if (!confirmItem) return
+    const id = confirmItem.id
+    try {
+      setDeletingId(id)
+      const uid = await ensureSessionAndUser()
+      const { error } = await supabase
+        .schema('api')
+        .from('workitems')
+        .delete()
+        .eq('id', id)
+        .eq('user_id', uid)
+        .select('id') // fuerza la petición y devuelve el id borrado
+
+      if (error) throw error
+      loadItems()
+    } catch (err) {
+      console.error('No se pudo eliminar el ítem', err)
+      alert(t('auth.loginError', { message: err.message }))
+    } finally {
+      setDeletingId(null)
+      setConfirmItem(null)
+    }
   }
 
   const hasItems = items.length > 0
@@ -134,8 +182,23 @@ function ItemsPage() {
           {open && (
             <ItemForm
               onSubmit={handleSubmit}
-              onCancel={() => setOpen(false)}
+              onCancel={() => {
+                setOpen(false)
+                setEditingItem(null)
+              }}
               submitting={submitting}
+              initialValues={
+                editingItem
+                  ? {
+                      name: editingItem.name,
+                      avatarColor: editingItem.avatar_color,
+                      capacity: editingItem.daily_capacity,
+                      days: editingItem.days,
+                      description: editingItem.description || '',
+                    }
+                  : undefined
+              }
+              submitLabel={editingItem ? 'Guardar cambios' : undefined}
             />
           )}
         </div>
@@ -156,8 +219,23 @@ function ItemsPage() {
           {open && (
             <ItemForm
               onSubmit={handleSubmit}
-              onCancel={() => setOpen(false)}
+              onCancel={() => {
+                setOpen(false)
+                setEditingItem(null)
+              }}
               submitting={submitting}
+              initialValues={
+                editingItem
+                  ? {
+                      name: editingItem.name,
+                      avatarColor: editingItem.avatar_color,
+                      capacity: editingItem.daily_capacity,
+                      days: editingItem.days,
+                      description: editingItem.description || '',
+                    }
+                  : undefined
+              }
+              submitLabel={editingItem ? 'Guardar cambios' : undefined}
             />
           )}
 
@@ -189,12 +267,42 @@ function ItemsPage() {
                   {item.description ? (
                     <p className="text-sm text-slate-300">{item.description}</p>
                   ) : null}
+                  <div className="flex gap-2">
+                    <Button variant="secondary" onClick={() => handleEdit(item)}>
+                      ✏️
+                    </Button>
+                    <Button
+                      variant="secondary"
+                      onClick={() => setConfirmItem(item)}
+                      disabled={deletingId === item.id}
+                    >
+                      {deletingId === item.id ? '⏳' : '🗑️'}
+                    </Button>
+                  </div>
                 </div>
               ))}
             </div>
           )}
         </div>
       )}
+
+      <ConfirmDialog
+        open={!!confirmItem}
+        title="Eliminar ítem"
+        message={
+          confirmItem
+            ? `¿Seguro que quieres eliminar "${confirmItem.name}"?`
+            : ''
+        }
+        onConfirm={handleDelete}
+        onCancel={() => {
+          setConfirmItem(null)
+          setDeletingId(null)
+        }}
+        loading={!!deletingId}
+        confirmLabel="Eliminar"
+        cancelLabel="Cancelar"
+      />
     </div>
   )
 }
