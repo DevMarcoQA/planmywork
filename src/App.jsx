@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { NavLink, Outlet, Route, Routes, useNavigate } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import HomePage from './pages/HomePage.jsx'
@@ -86,6 +86,7 @@ function App() {
   const navigate = useNavigate()
   const [session, setSession] = useState(null)
   const [loadingSession, setLoadingSession] = useState(true)
+  const [ensuringUser, setEnsuringUser] = useState(false)
 
   const currentLang = i18n.resolvedLanguage || i18n.language
 
@@ -132,6 +133,51 @@ function App() {
       subscription?.subscription?.unsubscribe()
     }
   }, [navigate])
+
+  const ensureUserRow = useCallback(
+    async (currentSession) => {
+      if (!currentSession || ensuringUser) return
+      setEnsuringUser(true)
+
+      const authId = currentSession.user.id
+      const email = currentSession.user.email
+      const fullName = currentSession.user.user_metadata?.full_name ?? null
+      const avatarUrl = currentSession.user.user_metadata?.avatar_url ?? null
+
+      try {
+        const { data, error } = await supabase
+          .from('users')
+          .select('id')
+          .eq('auth_id', authId)
+          .maybeSingle()
+
+        if (error) throw error
+
+        if (!data) {
+          const { error: insertError } = await supabase.from('users').insert([
+            {
+              auth_id: authId,
+              email,
+              full_name: fullName,
+              avatar_url: avatarUrl,
+            },
+          ])
+
+          if (insertError) throw insertError
+        }
+      } catch (err) {
+        console.error('No se pudo asegurar el usuario', err)
+        alert(t('auth.loginError', { message: err.message }))
+      } finally {
+        setEnsuringUser(false)
+      }
+    },
+    [ensuringUser, t],
+  )
+
+  useEffect(() => {
+    if (session) ensureUserRow(session)
+  }, [ensureUserRow, session])
 
   const handleSignOut = async () => {
     const { error } = await supabase.auth.signOut()
