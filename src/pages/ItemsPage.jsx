@@ -1,4 +1,5 @@
 import { useTranslation } from 'react-i18next'
+import Button from '../components/Button.jsx'
 
 function ItemsPage() {
   const { t } = useTranslation()
@@ -21,9 +22,7 @@ function ItemsPage() {
             <p className="text-lg font-semibold">{t('items.action')}</p>
             <p className="text-sm text-slate-400">{t('items.draft')}</p>
           </div>
-          <button className="rounded-lg bg-sky-600 px-4 py-2 text-sm font-semibold text-white shadow hover:bg-sky-500 focus:outline-none focus:ring-2 focus:ring-sky-400">
-            {t('items.action')}
-          </button>
+          <Button>{t('items.action')}</Button>
         </div>
       </div>
     </div>
